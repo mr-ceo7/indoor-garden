@@ -1,0 +1,105 @@
+/*
+*	Hello_World.ino
+*
+*	Author: Frank Häfele
+*	Date:	01.12.2023
+*
+*	Object: Print Hello World on LCD Display
+*/
+
+
+#include <LCD-I2C.h>
+#include <Wire.h>
+#include <Bonezegei_DHT11.h>
+
+
+
+//param = DHT11 signal pin
+Bonezegei_DHT11 dht(5);
+
+LCD_I2C lcd(0x27, 16, 2);  // Default address of most PCF8574 modules, change according
+
+// int rx = 2;
+// int tx = 3;
+int pump = 9;
+int temphumidity = 5;
+int ph = A0;
+int nutrientsensor = A1;
+int buzzer = 8;
+
+void setup() {
+  digitalWrite(pump, HIGH);
+  pinMode(buzzer, OUTPUT);
+  pinMode(pump, OUTPUT);
+  pinMode(temphumidity, INPUT);
+  Serial.begin(9600);
+  dht.begin();
+  Wire.begin();
+  lcd.begin(&Wire);
+  lcd.display();
+  lcd.backlight();
+
+  lcd.print("Auto HYDROPONIC");  // You can make spaces using well... spaces
+  lcd.setCursor(0, 1);           // Or setting the cursor in the desired position.
+  lcd.print("    SYSTEM!");
+  delay(3000);
+
+  for (int thisPin = 0; thisPin < 2; thisPin++) {
+    digitalWrite(buzzer, HIGH);
+    delay(90);
+    digitalWrite(buzzer, LOW);
+    delay(90);
+  }
+}
+
+void loop() {
+  int ph = analogRead(ph);
+  int nc = analogRead(nutrientsensor);
+  if (dht.getData()) {                         // get All data from DHT11
+    float tempDeg = dht.getTemperature();      // return temperature in celsius
+    float tempFar = dht.getTemperature(true);  // return temperature in fahrenheit if true celsius of false
+    int hum = dht.getHumidity();               // return humidity
+
+    Serial.println(nc);
+    lcd.clear();
+    lcd.print("TEMP = ");
+    lcd.print(tempDeg);
+    lcd.setCursor(0, 1);
+    lcd.print("HUMIDITY = ");
+    lcd.print(hum);
+    delay(3000);
+
+    if (nc >= 507 || nc < 50) {
+      digitalWrite(buzzer, HIGH);
+      delay(500);
+      digitalWrite(buzzer, LOW);
+      lcd.clear();
+      lcd.print("N-P-K = LOW!!");
+      lcd.setCursor(0, 1);
+      lcd.print("N-P-K = 15:11:13");
+      delay(3000);
+      digitalWrite(pump, LOW);
+      delay(3600);
+      lcd.clear();
+      lcd.print("Conditions");
+      lcd.setCursor(0, 1);
+      lcd.print("bad");
+      delay(3000);
+    } else {
+      digitalWrite(pump, HIGH);
+      lcd.clear();
+      lcd.print("PH = 6.5");
+      lcd.setCursor(0, 1);
+      lcd.print("N-P-K = 20:20:20");
+      delay(3000);
+      lcd.clear();
+      lcd.print("Conditions");
+      lcd.setCursor(0, 1);
+      lcd.print("Good");
+      delay(3000);
+    }
+
+    delay(2000);
+    //Serial.printf("Temperature: %0.1lf°C  %0.1lf°F Humidity:%d \n", tempDeg, tempFar, hum);
+  }
+}
