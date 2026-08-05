@@ -638,32 +638,7 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
     .model-info-row:last-child { border-bottom: none; }
     .model-info-row span:last-child { font-weight: 700; font-family: monospace; }
 
-    /* ─── Floating Chat Assistant Button & Drawer ───────────── */
-    .chat-toggle-btn {
-      position: fixed;
-      top: 20px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
-      color: white;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px var(--accent-glow);
-      z-index: 99;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
 
-    .chat-toggle-btn:hover {
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 6px 16px var(--accent-glow);
-    }
-
-    .chat-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
     .chat-drawer {
       position: fixed;
@@ -945,6 +920,125 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
     @keyframes blinker {
       50% { opacity: 0.5; }
     }
+    
+    /* ─── Responsive Media Queries ───────────────────────────── */
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        position: sticky;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      }
+      
+      .sidebar-brand {
+        margin-bottom: 0;
+        padding-left: 0;
+      }
+      
+      .nav-menu {
+        flex-direction: row;
+        gap: 12px;
+        flex: none;
+      }
+      
+      .nav-item {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .nav-item.active::before {
+        left: 25%;
+        top: auto;
+        bottom: 0;
+        width: 50%;
+        height: 3px;
+        border-radius: 4px 4px 0 0;
+      }
+      
+      .main-content {
+        padding: 16px;
+        height: auto;
+        overflow: visible;
+      }
+      
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      
+
+      
+      .welcome-text h1 {
+        font-size: 1.5rem;
+      }
+      
+      .dashboard-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+        gap: 16px;
+      }
+      
+      .visualizer-card {
+        width: 100%;
+        height: 320px;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .gauge-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      
+      .control-panel-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .control-left {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        padding-right: 0;
+        padding-bottom: 16px;
+      }
+      
+
+      
+      .chat-drawer {
+        z-index: 250;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .gauge-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        padding: 10px 14px;
+      }
+      
+      .sidebar-brand span {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -969,6 +1063,10 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
       <div class="nav-item" onclick="toggleModal(true)">
         <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
         <span>Settings</span>
+      </div>
+      <div class="nav-item" id="nav-chat-item" onclick="toggleChat(true)">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        <span>AI Assistant</span>
       </div>
     </div>
   </div>
@@ -1187,10 +1285,7 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
     </div>
   </div>
 
-  <!-- ─── Floating NLP Chatbot Drawer ─── -->
-  <button class="chat-toggle-btn" onclick="toggleChat(true)">
-    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-  </button>
+
 
   <div class="chat-drawer" id="chat-drawer">
     <div class="chat-drawer-header">
@@ -1287,6 +1382,7 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
 
   <script>
     let currentActiveMode = 'REACTIVE';
+    let pumpTransitionActive = false;
     let systemStatus = {
       temp: 0.0, hum: 0, ph: 7.0, nc: 250,
       pumpState: 0, expected_dosing: 0.0,
@@ -1311,7 +1407,9 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
       if (activeBtn) activeBtn.classList.add('active');
 
       const isManual = (mode === 'MANUAL');
-      document.getElementById('btn-manual-pump').disabled = !isManual;
+      if (!pumpTransitionActive) {
+        document.getElementById('btn-manual-pump').disabled = !isManual;
+      }
     }
 
     function updateDosingSlider() {
@@ -1319,21 +1417,55 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
       document.getElementById('slide-val-duration').textContent = duration;
     }
 
+    function updatePumpButtonState(state) {
+      const manualBtn = document.getElementById('btn-manual-pump');
+      if (state === 1) {
+        manualBtn.textContent = 'Turn Pump OFF';
+        manualBtn.style.background = "linear-gradient(135deg, var(--danger) 0%, #b91c1c 100%)";
+        manualBtn.style.boxShadow = "0 3px 8px rgba(239, 68, 68, 0.25)";
+      } else {
+        manualBtn.textContent = 'Turn Pump ON';
+        manualBtn.style.background = "linear-gradient(135deg, var(--primary) 0%, #059669 100%)";
+        manualBtn.style.boxShadow = "0 3px 8px var(--primary-glow)";
+      }
+    }
+
     function togglePump() {
+      if (pumpTransitionActive) return;
+      
       const btn = document.getElementById('btn-manual-pump');
       const action = (systemStatus.pumpState === 0) ? 'ON' : 'OFF';
+      
+      pumpTransitionActive = true;
+      btn.disabled = true;
+      btn.textContent = (action === 'ON') ? 'Turning ON...' : 'Turning OFF...';
+      
       fetch('/move?posH=' + document.getElementById('slide-duration').value + '&action=' + action, { method: 'POST' })
         .then(res => {
           if (res.ok) {
-            btn.textContent = (action === 'ON') ? 'Turn Pump OFF' : 'Turn Pump ON';
-            if (action === 'ON') {
-              btn.style.background = "linear-gradient(135deg, var(--danger) 0%, #b91c1c 100%)";
-              btn.style.boxShadow = "0 3px 8px rgba(239, 68, 68, 0.25)";
-            } else {
-              btn.style.background = "linear-gradient(135deg, var(--primary) 0%, #059669 100%)";
-              btn.style.boxShadow = "0 3px 8px var(--primary-glow)";
+            systemStatus.pumpState = (action === 'ON') ? 1 : 0;
+            updatePumpButtonState(systemStatus.pumpState);
+            
+            setTimeout(() => {
+              pumpTransitionActive = false;
+              if (currentActiveMode === 'MANUAL') {
+                btn.disabled = false;
+              }
+            }, 2000);
+          } else {
+            pumpTransitionActive = false;
+            if (currentActiveMode === 'MANUAL') {
+              btn.disabled = false;
             }
+            updatePumpButtonState(systemStatus.pumpState);
           }
+        })
+        .catch(() => {
+          pumpTransitionActive = false;
+          if (currentActiveMode === 'MANUAL') {
+            btn.disabled = false;
+          }
+          updatePumpButtonState(systemStatus.pumpState);
         });
     }
 
@@ -1393,8 +1525,14 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
 
     function toggleChat(open) {
       const drawer = document.getElementById('chat-drawer');
-      if (open) drawer.classList.add('open');
-      else drawer.classList.remove('open');
+      const chatItem = document.getElementById('nav-chat-item');
+      if (open) {
+        drawer.classList.add('open');
+        if (chatItem) chatItem.classList.add('active');
+      } else {
+        drawer.classList.remove('open');
+        if (chatItem) chatItem.classList.remove('active');
+      }
     }
 
     function toggleModal(open) {
@@ -1455,15 +1593,8 @@ const char HTTP_INDEX[] PROGMEM = R"raw(
           }
 
           // Manual button styling if pump was toggled externally
-          const manualBtn = document.getElementById('btn-manual-pump');
-          if (data.pumpState === 1) {
-            manualBtn.textContent = 'Turn Pump OFF';
-            manualBtn.style.background = "linear-gradient(135deg, var(--danger) 0%, #b91c1c 100%)";
-            manualBtn.style.boxShadow = "0 3px 8px rgba(239, 68, 68, 0.25)";
-          } else {
-            manualBtn.textContent = 'Turn Pump ON';
-            manualBtn.style.background = "linear-gradient(135deg, var(--primary) 0%, #059669 100%)";
-            manualBtn.style.boxShadow = "0 3px 8px var(--primary-glow)";
+          if (!pumpTransitionActive) {
+            updatePumpButtonState(data.pumpState);
           }
 
           // Liquid visualizer height and color updates based on NC
