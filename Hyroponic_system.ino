@@ -21,13 +21,13 @@
 
 // ─── Pin Definitions ────────────────────────────────────────
 #define BUZZER_PIN 11
-#define PUMP_PIN 9
+#define PUMP_PIN 6
 #define DHT_PIN 5
 #define PH_PIN A0          // Keep defined, but pH is simulated
 #define NUTRIENT_PIN A1
 
 // ─── LCD Setup ──────────────────────────────────────────────
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 // ─── Sensor Setup ───────────────────────────────────────────
 Bonezegei_DHT11 dht(DHT_PIN);
@@ -180,7 +180,7 @@ void handleCommand(char *cmd) {
 
 // ─── Setup ──────────────────────────────────────────────────
 void setup() {
-  digitalWrite(PUMP_PIN, HIGH); // Start with pump OFF (active-low relay)
+  digitalWrite(PUMP_PIN, LOW); // Start with pump OFF (active-low relay)
   pinMode(PUMP_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   
